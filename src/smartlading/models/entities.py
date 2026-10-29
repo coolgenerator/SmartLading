@@ -30,9 +30,9 @@ class Brand(BaseModel):
     @model_validator(mode="after")
     def _check_safety_line(self) -> Brand:
         if self.safety_line_mode == "fixed" and self.cash_safety_line_fixed is None:
-            raise ValueError("safety_line_mode=fixed 需要 cash_safety_line_fixed")
+            raise ValueError("safety_line_mode=fixed requires cash_safety_line_fixed")
         if self.safety_line_mode == "days_of_fixed_cost" and self.safety_line_days is None:
-            raise ValueError("safety_line_mode=days_of_fixed_cost 需要 safety_line_days")
+            raise ValueError("safety_line_mode=days_of_fixed_cost requires safety_line_days")
         return self
 
     @computed_field
@@ -104,7 +104,7 @@ class PurchaseOrder(BaseModel):
     @model_validator(mode="after")
     def _in_transit_needs_eta(self) -> PurchaseOrder:
         if self.status == POStatus.IN_TRANSIT and self.eta is None:
-            raise ValueError("在途订单必须有 eta")
+            raise ValueError("An in-transit purchase order requires an eta")
         return self
 
 
@@ -135,14 +135,14 @@ class Scenario(BaseModel):
     def _unique_option_ids(self) -> Scenario:
         ids = [o.id for o in self.options]
         if len(set(ids)) != len(ids):
-            raise ValueError("options 的 id 不能重复")
+            raise ValueError("Option ids must be unique")
         return self
 
     def option(self, option_id: str) -> ScenarioOption:
         for o in self.options:
             if o.id == option_id:
                 return o
-        raise KeyError(f"没有方案 {option_id}")
+        raise KeyError(f"No option {option_id} in scenario")
 
     def is_stale(self, brand: Brand) -> bool:
         return self.state_version != brand.state_version

@@ -16,12 +16,19 @@ from dataclasses import dataclass
 from smartlading.models import CitedNumber, OptionMetrics, Scenario, SimulationResult
 
 PLACEHOLDER = re.compile(r"\{\{\s*([A-Za-z0-9_.\[\]]+)\s*\}\}")
-# 允许保留的带数字记号：分位数名称
-_ALLOWED_TOKENS = re.compile(r"\bP(?:5|10|50|90)\b")
+# 允许保留的带数字记号：分位数名称。不能用 \b——中文字符也算单词字符，「P10为」会匹配失败
+_ALLOWED_TOKENS = re.compile(r"(?<![A-Za-z0-9])P(?:5|10|50|90)(?![0-9])")
 _ARABIC = re.compile(r"\d")
 _CJK_QUANTITY = re.compile(r"[零一二两三四五六七八九十百千万半]+\s*(?:倍|成|个百分点|个点|%|％|天|美元|块|件|万)")
+# 英文的数量词同样算「自行推算」：twice、half、three times、10 points 之类
+_EN_QUANTITY = re.compile(
+    r"\b(?:twice|double[ds]?|triple[ds]?|thrice|quadruple[ds]?|half|halved|a third|one[- ]third|a quarter|one[- ]quarter"
+    r"|(?:one|two|three|four|five|six|seven|eight|nine|ten|a few|several)[- ](?:times|fold|percent|percentage points?|points?"
+    r"|days?|weeks?|months?|units?|dollars?|thousand|hundred|million))\b",
+    re.IGNORECASE,
+)
 
-RISK_SOURCE_NAMES = {"demand": "需求波动", "lead_time": "交期延误", "tariff": "关税上调", "default": "供应商违约"}
+RISK_SOURCE_NAMES = {"demand": "demand swings", "lead_time": "lead-time delays", "tariff": "tariff increases", "default": "supplier default"}
 
 
 @dataclass(frozen=True)
@@ -53,12 +60,12 @@ class FactSheet:
 
     def check_template(self, template: str) -> list[str]:
         """返回模板的问题列表，空列表表示可以安全渲染。"""
-        problems = [f"未知占位符 {{{{{k}}}}}" for k in placeholders(template) if k not in self._facts]
+        problems = [f"unknown placeholder {{{{{k}}}}}" for k in placeholders(template) if k not in self._facts]
         bare = _ALLOWED_TOKENS.sub("", PLACEHOLDER.sub("", template))
         if m := _ARABIC.search(bare):
-            problems.append(f"出现未经引擎给出的数字：…{bare[max(0, m.start() - 12) : m.start() + 12]}…")
-        if m := _CJK_QUANTITY.search(bare):
-            problems.append(f"出现自行推算的数量：「{m.group(0)}」")
+            problems.append(f"number not supplied by the engine: ...{bare[max(0, m.start() - 12) : m.start() + 12]}...")
+        if m := _CJK_QUANTITY.search(bare) or _EN_QUANTITY.search(bare):
+            problems.append(f"self-computed quantity: {m.group(0)!r}")
         return problems
 
     def render(self, template: str) -> str:
@@ -90,7 +97,7 @@ def fmt_pct(v: float) -> str:
 
 
 def fmt_runway(days: int, horizon: int) -> str:
-    return f"超过 {horizon} 天" if days > horizon else f"{days} 天"
+    return f"more than {horizon} days" if days > horizon else f"{days} days"
 
 
 # ---------------------------------------------------------------------------
@@ -101,13 +108,13 @@ def fmt_runway(days: int, horizon: int) -> str:
 def scenario_facts(scenario: Scenario, result: SimulationResult) -> FactSheet:
     facts = FactSheet()
     horizon = result.horizon_days
-    facts.add("horizon_days", horizon, f"{horizon} 天", "模拟周期")
+    facts.add("horizon_days", horizon, f"{horizon} days", "simulation horizon")
     if result.options:
         line = result.options[0].cash_fan.safety_line
-        facts.add("safety_line", line, fmt_money(line), "现金安全线")
+        facts.add("safety_line", line, fmt_money(line), "cash safety line")
     if result.suggested is not None:
         q = result.suggested.quantity
-        facts.add("suggested.quantity", q, f"{q:,} 件", "系统建议订货量")
+        facts.add("suggested.quantity", q, f"{q:,} units", "order quantity suggested by the engine's grid search")
     labels = {o.id: o.label for o in scenario.options}
     for m in result.options:
         _option_facts(facts, m, labels.get(m.option_id, m.option_id), horizon)
@@ -116,28 +123,28 @@ def scenario_facts(scenario: Scenario, result: SimulationResult) -> FactSheet:
 
 def _option_facts(facts: FactSheet, m: OptionMetrics, label: str, horizon: int) -> None:
     p = f"options[{m.option_id}]"
-    name = f"方案{label}"
-    facts.add(f"{p}.quantity", m.quantity, f"{m.quantity:,} 件", f"{name} 订货量")
-    facts.add(f"{p}.prepay_ratio", m.prepay_ratio, fmt_pct(m.prepay_ratio), f"{name} 预付比例")
+    name = f"option {label}"
+    facts.add(f"{p}.quantity", m.quantity, f"{m.quantity:,} units", f"{name} order quantity")
+    facts.add(f"{p}.prepay_ratio", m.prepay_ratio, fmt_pct(m.prepay_ratio), f"{name} prepayment ratio")
     prepay = m.quantity * m.unit_cost * m.prepay_ratio
-    facts.add(f"{p}.prepay_amount", prepay, fmt_money(prepay), f"{name} 下单时预付金额（供应商违约时的损失上限）")
+    facts.add(f"{p}.prepay_amount", prepay, fmt_money(prepay), f"{name} prepayment paid at order time (the most that can be lost if the supplier defaults)")
     for q in ("p10", "p50", "p90"):
         days = getattr(m, f"runway_{q}")
-        facts.add(f"{p}.runway_{q}", days, fmt_runway(days, horizon), f"{name} 现金跑道 {q.upper()}")
-    facts.add(f"{p}.stockout_prob", m.stockout_prob, fmt_pct(m.stockout_prob), f"{name} 断货概率")
-    facts.add(f"{p}.expected_profit", m.expected_profit, fmt_money(m.expected_profit), f"{name} 预期利润")
-    facts.add(f"{p}.worst_case_p5", m.worst_case_p5, fmt_money(m.worst_case_p5), f"{name} 最坏情况（P5）利润")
-    facts.add(f"{p}.credit_breach_prob", m.credit_breach_prob, fmt_pct(m.credit_breach_prob), f"{name} 授信用尽的概率")
-    facts.add(f"{p}.default_loss_prob", m.default_loss_prob, fmt_pct(m.default_loss_prob), f"{name} 供应商违约发生的概率")
+        facts.add(f"{p}.runway_{q}", days, fmt_runway(days, horizon), f"{name} cash runway {q.upper()} (days until cash first drops below the safety line)")
+    facts.add(f"{p}.stockout_prob", m.stockout_prob, fmt_pct(m.stockout_prob), f"{name} stockout probability")
+    facts.add(f"{p}.expected_profit", m.expected_profit, fmt_money(m.expected_profit), f"{name} expected profit")
+    facts.add(f"{p}.worst_case_p5", m.worst_case_p5, fmt_money(m.worst_case_p5), f"{name} worst-case (P5) profit")
+    facts.add(f"{p}.credit_breach_prob", m.credit_breach_prob, fmt_pct(m.credit_breach_prob), f"{name} probability of exhausting the credit line")
+    facts.add(f"{p}.default_loss_prob", m.default_loss_prob, fmt_pct(m.default_loss_prob), f"{name} probability that the supplier defaults")
     if m.cash_fan.p10:
         low = min(m.cash_fan.p10)
-        facts.add(f"{p}.cash_p10_min", low, fmt_money(low), f"{name} 现金 P10 曲线最低点")
+        facts.add(f"{p}.cash_p10_min", low, fmt_money(low), f"{name} lowest point of the P10 cash curve")
     for source, share in m.risk_attribution.items():
         facts.add(
             f"{p}.risk_attribution.{source}",
             share,
             fmt_pct(share),
-            f"{name} 最坏情况利润中「{RISK_SOURCE_NAMES.get(source, source)}」的贡献占比",
+            f"{name} share of the worst-case profit shortfall caused by {RISK_SOURCE_NAMES.get(source, source)}",
         )
 
 

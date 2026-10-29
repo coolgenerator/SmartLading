@@ -142,7 +142,7 @@ def build_input(
     - 只纳入 accepted 且目标匹配的信号；条款类信号（moq、prepay_ratio）直接改写快照
     """
     if offer.sku_id != sku.id or offer.supplier_id != supplier.id:
-        raise ValueError("offer 与 sku/supplier 不匹配")
+        raise ValueError("offer does not match the given sku/supplier")
     offers_by_supplier = offers_by_supplier or {}
     terms = {"moq": float(supplier.moq), "prepay_ratio": supplier.default_prepay_ratio}
     engine_signals: list[EngineSignal] = []

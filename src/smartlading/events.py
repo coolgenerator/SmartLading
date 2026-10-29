@@ -44,7 +44,7 @@ def inject_event(
             quote=event.description,
             quote_span=(0, len(event.description)),
             status=SignalStatus.ACCEPTED,
-            rationale=f"预设事件：{event.name}",
+            rationale=f"Preset event: {event.name}",
             **{"probability": 1.0, **tpl},
         )
         for tpl in event.signal_templates
@@ -111,10 +111,10 @@ def _impact(sig: RiskSignal, po: PurchaseOrder, sku: SKU, sup: Supplier, offer: 
                 return None
             return (
                 extra,
-                f"{sku.name} 关税 {old:.0%} → {new:.0%}，订单 {po.id} 到港时预计多付关税 ${extra:,.0f}",
-                "在途订单关税已无法规避，请预留到港时的关税现金；计划中的订单可评估提前出货或换产地。"
+                f"{sku.name} tariff {old:.0%} → {new:.0%}: order {po.id} will owe about ${extra:,.0f} more duty on arrival",
+                "The duty on an in-transit order can no longer be avoided. Set aside cash for it on arrival, and consider shipping planned orders earlier or from another country."
                 if in_transit
-                else "订单尚未出货，建议重新运行模拟，比较提前出货、减少数量或换产地的方案。",
+                else "The order has not shipped yet. Rerun the simulation to compare shipping earlier, ordering less, or sourcing from another country.",
             )
         case SignalParameter.UNIT_COST | SignalParameter.UNIT_FREIGHT:
             if in_transit and sig.parameter is SignalParameter.UNIT_COST:
@@ -123,11 +123,11 @@ def _impact(sig: RiskSignal, po: PurchaseOrder, sku: SKU, sup: Supplier, offer: 
             extra = (sig.apply(old) - old) * po.quantity * sig.probability
             if extra <= 0:
                 return None
-            label = "采购成本" if sig.parameter is SignalParameter.UNIT_COST else "运费"
+            label = "purchase cost" if sig.parameter is SignalParameter.UNIT_COST else "freight"
             return (
                 extra,
-                f"订单 {po.id}（{sku.name}）{label}预计增加 ${extra:,.0f}",
-                "订单尚未下达，可以在谈判室试算新条款，或比较其他供应商的报价。",
+                f"Order {po.id} ({sku.name}): {label} expected to rise by ${extra:,.0f}",
+                "The order has not been placed yet. Try new terms in the negotiation room, or compare quotes from other suppliers.",
             )
         case SignalParameter.LEAD_TIME_MEAN_DAYS:
             delay = sig.apply(sup.lead_time_mean_days) - sup.lead_time_mean_days
@@ -135,8 +135,8 @@ def _impact(sig: RiskSignal, po: PurchaseOrder, sku: SKU, sup: Supplier, offer: 
                 return None
             return (
                 0.0,
-                f"{sup.name} 交期预计延长 {delay:.0f} 天，影响订单 {po.id}（{sku.name}，当前库存 {sku.on_hand:,} 件）",
-                "请重新运行模拟查看断货概率的变化；必要时空运补一小批，或放缓广告投放。",
+                f"{sup.name} lead time expected to grow by {delay:.0f} days, affecting order {po.id} ({sku.name}, {sku.on_hand:,} units on hand)",
+                "Rerun the simulation to see how the stockout probability changes. If needed, air-freight a small top-up batch or slow down ad spend.",
             )
         case SignalParameter.DEFAULT_PROB:
             exposure = goods * po.prepay_ratio
@@ -146,7 +146,7 @@ def _impact(sig: RiskSignal, po: PurchaseOrder, sku: SKU, sup: Supplier, offer: 
             expected_loss = exposure * delta * sig.probability
             return (
                 expected_loss,
-                f"{sup.name} 违约风险上升，订单 {po.id} 已付预付款 ${exposure:,.0f} 面临损失，预期损失增加 ${expected_loss:,.0f}",
-                "尽快确认工厂排产与出货进度；后续订单降低预付比例或分批下单。",
+                f"{sup.name} default risk is up: the ${exposure:,.0f} prepaid on order {po.id} is at risk, and the expected loss rises by ${expected_loss:,.0f}",
+                "Confirm the factory's production and shipping schedule now. For future orders, lower the prepayment or split the order.",
             )
     return None

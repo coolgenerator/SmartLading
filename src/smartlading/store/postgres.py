@@ -99,7 +99,7 @@ class Repository:
         self._upsert("purchase_orders", po.model_dump(mode="json"))
 
     def get_brand(self, brand_id: str) -> Brand:
-        return Brand(**self._one("SELECT * FROM brands WHERE id = %s", (brand_id,), f"品牌 {brand_id}"))
+        return Brand(**self._one("SELECT * FROM brands WHERE id = %s", (brand_id,), f"brand {brand_id}"))
 
     def list_skus(self, brand_id: str) -> list[SKU]:
         rows = self.conn.execute("SELECT * FROM skus WHERE brand_id = %s ORDER BY id", (brand_id,)).fetchall()
@@ -122,7 +122,7 @@ class Repository:
 
     def bump_state_version(self, brand_id: str) -> int:
         row = self._one(
-            "UPDATE brands SET state_version = state_version + 1 WHERE id = %s RETURNING state_version", (brand_id,), f"品牌 {brand_id}"
+            "UPDATE brands SET state_version = state_version + 1 WHERE id = %s RETURNING state_version", (brand_id,), f"brand {brand_id}"
         )
         return row["state_version"]
 
@@ -144,7 +144,7 @@ class Repository:
         self._upsert("risk_signals", row)
 
     def get_signal(self, signal_id: str) -> RiskSignal:
-        return _signal(self._one("SELECT * FROM risk_signals WHERE id = %s", (signal_id,), f"信号 {signal_id}"))
+        return _signal(self._one("SELECT * FROM risk_signals WHERE id = %s", (signal_id,), f"signal {signal_id}"))
 
     def list_signals(self, brand_id: str, status: SignalStatus | None = None) -> list[RiskSignal]:
         sql = "SELECT * FROM risk_signals WHERE brand_id = %s"
@@ -158,11 +158,11 @@ class Repository:
         """用户修改 change_value / probability / target / effective_date（US-5）。只能改 pending 的信号。"""
         allowed = {"change_value", "probability", "target_type", "target_id", "effective_date", "change_type"}
         if bad := set(changes) - allowed:
-            raise InvalidState(f"不能修改字段 {sorted(bad)}")
+            raise InvalidState(f"fields cannot be edited: {sorted(bad)}")
         with self.transaction():
             sig = self.get_signal(signal_id)
             if sig.status != SignalStatus.PENDING:
-                raise InvalidState("只能修改待确认的信号")
+                raise InvalidState("only pending signals can be edited")
             updated = RiskSignal(**(sig.model_dump() | changes | {"edited_by_user": True}))
             self.save_signal(updated)
         return updated
@@ -172,9 +172,9 @@ class Repository:
         with self.transaction():
             sig = self.get_signal(signal_id)
             if sig.status != SignalStatus.PENDING:
-                raise InvalidState(f"信号当前为 {sig.status}，不能接受")
+                raise InvalidState(f"signal is {sig.status} and cannot be accepted")
             if not sig.matched:
-                raise InvalidState("信号的影响对象不在品牌数据中，请先修改影响对象")
+                raise InvalidState("the signal target is not in the brand data; edit the target first")
             self.conn.execute("UPDATE risk_signals SET status = 'accepted' WHERE id = %s", (signal_id,))
             version = self.bump_state_version(sig.brand_id)
         return sig.model_copy(update={"status": SignalStatus.ACCEPTED}), version
@@ -203,7 +203,7 @@ class Repository:
         self._upsert("scenarios", row)
 
     def get_scenario(self, scenario_id: str) -> Scenario:
-        r = self._one("SELECT * FROM scenarios WHERE id = %s", (scenario_id,), f"方案 {scenario_id}")
+        r = self._one("SELECT * FROM scenarios WHERE id = %s", (scenario_id,), f"scenario {scenario_id}")
         return Scenario(
             id=r["id"],
             brand_id=r["brand_id"],
@@ -234,7 +234,7 @@ class Repository:
         )
 
     def get_explanation(self, scenario_id: str) -> Explanation | None:
-        r = self._one("SELECT explanation FROM scenarios WHERE id = %s", (scenario_id,), f"方案 {scenario_id}")
+        r = self._one("SELECT explanation FROM scenarios WHERE id = %s", (scenario_id,), f"scenario {scenario_id}")
         return Explanation(**r["explanation"]) if r["explanation"] else None
 
     # ------------------------------------------------------------------
@@ -252,13 +252,13 @@ class Repository:
         return [_event(r) for r in rows]
 
     def get_preset_event(self, event_id: str) -> PresetEvent:
-        return _event(self._one("SELECT * FROM preset_events WHERE id = %s", (event_id,), f"事件 {event_id}"))
+        return _event(self._one("SELECT * FROM preset_events WHERE id = %s", (event_id,), f"event {event_id}"))
 
     def inject_event(self, brand_id: str, event_id: str) -> tuple[InjectResult, int, list[str]]:
         """应用事件：写入 accepted 信号和预警，bump 版本。返回 (结果, 新版本号, 过期方案 id)。"""
         with self.transaction():
             # 锁住品牌行，避免并发注入时基于同一旧状态计算
-            brand = Brand(**self._one("SELECT * FROM brands WHERE id = %s FOR UPDATE", (brand_id,), f"品牌 {brand_id}"))
+            brand = Brand(**self._one("SELECT * FROM brands WHERE id = %s FOR UPDATE", (brand_id,), f"brand {brand_id}"))
             result = inject_event(
                 self.get_preset_event(event_id),
                 brand_id=brand_id,
@@ -288,7 +288,7 @@ class Repository:
         return [Alert(**{k: v for k, v in r.items() if k != "brand_id"}) for r in rows]
 
     def ack_alert(self, alert_id: str) -> None:
-        self._one("UPDATE alerts SET acknowledged = true WHERE id = %s RETURNING id", (alert_id,), f"预警 {alert_id}")
+        self._one("UPDATE alerts SET acknowledged = true WHERE id = %s RETURNING id", (alert_id,), f"alert {alert_id}")
 
     # ------------------------------------------------------------------
     # F6 谈判
@@ -302,7 +302,7 @@ class Repository:
         )
 
     def get_factory_persona(self, supplier_id: str) -> tuple[FactoryPersona, FactoryAgentConfig]:
-        r = self._one("SELECT persona FROM factory_personas WHERE supplier_id = %s", (supplier_id,), f"工厂设定 {supplier_id}")
+        r = self._one("SELECT persona FROM factory_personas WHERE supplier_id = %s", (supplier_id,), f"factory persona {supplier_id}")
         return FactoryPersona(**r["persona"]["persona"]), FactoryAgentConfig(**r["persona"]["config"])
 
     def save_negotiation(self, negotiation: Negotiation) -> None:
@@ -311,7 +311,7 @@ class Repository:
         self._upsert("negotiations", row)
 
     def get_negotiation(self, negotiation_id: str) -> Negotiation:
-        r = self._one("SELECT * FROM negotiations WHERE id = %s", (negotiation_id,), f"谈判 {negotiation_id}")
+        r = self._one("SELECT * FROM negotiations WHERE id = %s", (negotiation_id,), f"negotiation {negotiation_id}")
         return Negotiation(
             id=r["id"],
             brand_id=r["brand_id"],

@@ -60,7 +60,7 @@ class SimulationResult(BaseModel):
         for m in self.options:
             if m.option_id == option_id:
                 return m
-        raise KeyError(f"结果中没有方案 {option_id}")
+        raise KeyError(f"No option {option_id} in result")
 
 
 class Recommendation(BaseModel):

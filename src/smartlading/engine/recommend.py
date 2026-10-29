@@ -27,7 +27,7 @@ def recommend(result: SimulationResult, min_runway_days: int | None = None) -> R
     else:
         best = max(options, key=_risk_key)
         rule = "min_risk_fallback"
-        warning = "所有方案在 P10 情景下都会跌破现金安全线，已推荐风险最低的方案"
+        warning = "Every option drops below the cash safety line in the P10 case; recommending the lowest-risk option."
 
     # 反事实：其余方案中预期利润最高的那个（通常是更激进、诱惑更大的选择）
     others = [m for m in options if m.option_id != best.option_id]

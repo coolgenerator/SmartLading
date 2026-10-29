@@ -78,21 +78,21 @@ class ClaudeLLM:
                 fallbacks="default",
             )
         except anthropic.APIConnectionError as e:
-            raise LLMError(f"无法连接 Claude API：{e}") from e
+            raise LLMError(f"Could not reach the Claude API: {e}") from e
         except anthropic.RateLimitError as e:
-            raise LLMError("Claude API 限流，请稍后重试") from e
+            raise LLMError("Claude API rate limit hit, please retry shortly") from e
         except anthropic.APIStatusError as e:
-            raise LLMError(f"Claude API 返回 {e.status_code}：{e.message}") from e
+            raise LLMError(f"Claude API returned {e.status_code}: {e.message}") from e
         except pydantic.ValidationError as e:
             # 拒答或截断时文本不是完整 JSON，解析阶段就会失败
-            raise LLMError(f"模型输出不符合 {output_type.__name__} 结构") from e
+            raise LLMError(f"Model output does not match {output_type.__name__}") from e
 
         if response.stop_reason == "refusal":
-            raise LLMError("模型拒绝回答该请求")
+            raise LLMError("The model declined this request")
         if response.stop_reason == "max_tokens":
-            raise LLMError("模型输出被截断")
+            raise LLMError("Model output was truncated")
         parsed = response.parsed_output
         if parsed is None:
-            raise LLMError("模型没有返回结构化结果")
+            raise LLMError("The model returned no structured output")
         log.debug("LLM %s %.0fms usage=%s", output_type.__name__, (time.monotonic() - started) * 1000, response.usage)
         return parsed

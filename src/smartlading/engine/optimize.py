@@ -34,7 +34,7 @@ def suggest_quantity(
     else:
         best_q, _ = max(grid, key=lambda x: (x[1].runway_p10, x[1].worst_case_p5))
 
-    metrics = sim.evaluate(ScenarioOption(id="suggested", label="系统建议", quantity=best_q))
+    metrics = sim.evaluate(ScenarioOption(id="suggested", label="Suggested", quantity=best_q))
     return SuggestedQuantity(
         quantity=best_q,
         prepay_ratio=inp.default_prepay_ratio,

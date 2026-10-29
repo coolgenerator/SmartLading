@@ -53,7 +53,7 @@ class RiskSignal(BaseModel):
     def _quote_in_source(self) -> RiskSignal:
         start, end = self.quote_span
         if self.source_text[start:end] != self.quote:
-            raise ValueError("quote 必须是 source_text 中 quote_span 位置的原文")
+            raise ValueError("quote must equal source_text[quote_span[0]:quote_span[1]]")
         return self
 
     def apply(self, value: float) -> float:

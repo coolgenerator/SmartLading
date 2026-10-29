@@ -6,7 +6,9 @@
 from smartlading.llm.client import ClaudeLLM, LLMError, StructuredLLM
 from smartlading.llm.explain import Explainer, ScenarioStaleError
 from smartlading.llm.extract_signals import NO_IMPACT_MESSAGE, BrandContext, ExtractionResult, SignalExtractor
+from smartlading.llm.factory import make_llm
 from smartlading.llm.negotiate import FactoryAgentConfig, FactoryNegotiator, TermsImpact, TurnResult
+from smartlading.llm.openrouter import OpenRouterLLM
 
 __all__ = [
     "NO_IMPACT_MESSAGE",
@@ -17,9 +19,11 @@ __all__ = [
     "FactoryAgentConfig",
     "FactoryNegotiator",
     "LLMError",
+    "OpenRouterLLM",
     "ScenarioStaleError",
     "SignalExtractor",
     "StructuredLLM",
     "TermsImpact",
     "TurnResult",
+    "make_llm",
 ]
