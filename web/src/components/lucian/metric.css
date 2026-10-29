@@ -1,0 +1,30 @@
+/* Lucian UX/UI Prompt #098 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#098
+   Adapted: fluid width, driven by store data instead of a random live feed (pause button removed). */
+.u098{position:relative;width:100%;min-height:390px;display:flex;flex-direction:column;padding:20px 18px 16px;border-radius:30px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line),0 30px 60px -36px var(--ux-shadow-strong);overflow:hidden}
+.u098-h{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:750;color:var(--ux-ink-2)}
+.u098-live{width:8px;height:8px;border-radius:50%;background:var(--ux-mint);box-shadow:0 0 0 0 color-mix(in srgb,var(--ux-mint) 50%,transparent);animation:u098-live 1.6s ease-out infinite}
+@keyframes u098-live{to{box-shadow:0 0 0 8px color-mix(in srgb,var(--ux-mint) 0%,transparent)}}
+.u098-ver{margin-left:auto;font-size:11.5px;font-weight:700;color:var(--ux-ink-3);font-variant-numeric:tabular-nums}
+.u098-num{display:flex;align-items:flex-start;height:58px;margin-top:10px;overflow:hidden;-webkit-mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(transparent,#000 14%,#000 86%,transparent);font-size:50px;font-weight:850;letter-spacing:-.04em;line-height:58px;font-variant-numeric:tabular-nums}
+.u098-col{display:inline-flex;flex-direction:column;transform:translateY(calc(var(--d) * -58px));transition:transform .9s cubic-bezier(.3,1.25,.5,1);transition-delay:calc(var(--i) * 45ms)}
+.u098-col span{height:58px}
+.u098-sym{display:inline-block}
+.u098-sym.sm{font-size:28px;margin-left:2px}
+.u098-dl{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:12.5px;font-weight:700;color:var(--ux-ink-3)}
+.u098-bd{display:inline-flex;align-items:center;gap:3px;height:24px;padding:0 8px;border-radius:999px;background:color-mix(in srgb,var(--c) 15%,transparent);color:var(--c);font-weight:850;transition:color .3s,background-color .3s}
+.u098-bd svg{width:10px;height:10px;fill:currentColor;transition:transform .4s var(--ux-spring)}
+.u098-bd.dn svg{transform:rotate(180deg)}
+.u098-sp{position:relative;height:128px;margin:14px -18px 0;overflow:hidden}
+.u098-sp svg{display:block;width:100%;height:128px;overflow:visible}
+.u098-ln{fill:none;stroke:var(--ux-accent);stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.u098-gd stop{stop-color:var(--ux-accent)}
+.u098-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:auto}
+.u098-tb{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:9px 10px;border:0;border-radius:14px;background:var(--ux-surface-2);text-align:left;transition:background-color .2s,box-shadow .25s,transform .3s var(--ux-spring)}
+.u098-tb:hover{background:var(--ux-surface-3)}
+.u098-tb:active{transform:scale(.96)}
+.u098-tb[aria-pressed="true"]{background:var(--ux-surface);box-shadow:inset 0 0 0 2px var(--ux-accent)}
+.u098-tb small{font-size:11.5px;font-weight:750;color:var(--ux-ink-3)}
+.u098-tb b{font-size:15px;font-weight:850;letter-spacing:-.03em;color:var(--ux-ink);font-variant-numeric:tabular-nums}
+.u098-tb em{font-style:normal;font-size:11px;font-weight:800;color:var(--ux-mint)}
+.u098-tb em.dn{color:var(--ux-danger)}
+.u098-tb:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}

@@ -1,0 +1,23 @@
+/* Lucian UX/UI Prompt #017 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#017
+   Adapted: fluid width and a shorter frame so it fits option cards. Motion values unchanged. */
+.u017{position:relative;width:100%;display:flex;flex-direction:column;justify-content:center;padding:0 6px}
+.u017-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:50px}
+.u017-head b{font-size:13.5px;font-weight:720;letter-spacing:-.02em}
+.u017-head span{font-size:12px;color:var(--ux-ink-3)}
+.u017-track{position:relative;height:12px;border-radius:999px;background:var(--ux-surface-3);box-shadow:inset 0 1px 2px rgba(0,0,0,.08);cursor:pointer;touch-action:none}
+.u017-fill{position:absolute;left:0;top:0;bottom:0;width:calc(var(--v) * 100%);border-radius:inherit;background:linear-gradient(90deg,#8B6CFF,#4F8DFF)}
+.u017-fill::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(180deg,rgba(255,255,255,.35),transparent 60%)}
+.u017-thumb{position:absolute;left:calc(var(--v) * 100%);top:50%;width:32px;height:32px;margin:-16px 0 0 -16px;border-radius:50%;background:#fff;cursor:grab;
+  box-shadow:0 0 0 3px #4F8DFF,0 8px 18px -6px rgba(40,60,160,.5);transition:transform .35s var(--ux-spring),box-shadow .3s var(--ux-ease)}
+.u017-thumb:hover{transform:scale(1.08)}
+.u017.is-drag .u017-thumb{cursor:grabbing;transform:scale(1.15);box-shadow:0 0 0 3px #4F8DFF,0 0 0 10px color-mix(in srgb,#4F8DFF 18%,transparent),0 8px 18px -6px rgba(40,60,160,.5)}
+.u017-thumb:focus-visible{outline:none;box-shadow:0 0 0 3px #4F8DFF,0 0 0 8px color-mix(in srgb,var(--ux-accent) 35%,transparent)}
+.u017-bub{position:absolute;left:calc(var(--v) * 100%);bottom:28px;transform-origin:50% 100%;transform:translateX(-50%) rotate(var(--tilt,0deg)) scale(var(--bs,1));transition:transform .55s var(--ux-spring);pointer-events:none;z-index:2}
+.u017.is-drag .u017-bub{--bs:1.1;transition:transform .12s linear}
+.u017-bub span{display:block;padding:7px 12px;border-radius:12px;background:var(--ux-ink);color:var(--ux-page);font-size:14px;font-weight:760;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums;box-shadow:0 12px 24px -12px var(--ux-shadow-strong)}
+.u017-bub::after{content:"";position:absolute;left:50%;bottom:-5px;width:12px;height:12px;margin-left:-6px;border-radius:2px;background:var(--ux-ink);transform:rotate(45deg)}
+.u017-ticks{display:flex;justify-content:space-between;margin-top:18px;font-size:11.5px;font-weight:600;color:var(--ux-ink-3);font-variant-numeric:tabular-nums}
+.u017-ticks span{position:relative;transition:color .3s var(--ux-ease)}
+.u017-ticks span.on{color:var(--ux-ink)}
+.u017-ticks span::before{content:"";position:absolute;left:50%;top:-10px;width:2px;height:5px;margin-left:-1px;border-radius:1px;background:currentColor;opacity:.6}
+.u017-mark{position:absolute;top:-6px;bottom:-6px;width:2px;margin-left:-1px;border-radius:2px;background:var(--ux-danger);opacity:.7;pointer-events:none}

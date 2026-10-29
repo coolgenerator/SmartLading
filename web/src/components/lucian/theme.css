@@ -1,0 +1,7 @@
+/* Lucian UX/UI Prompt #219 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#219 */
+.u219-tg{width:40px;height:40px;border:0;border-radius:12px;background:var(--ux-surface);box-shadow:inset 0 0 0 1px var(--ux-line);color:var(--ux-ink);display:grid;place-items:center;cursor:pointer}
+.u219-tg:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}
+.u219-tg svg{width:18px;height:18px;transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+.u219-tg.is-dark svg{transform:rotate(-90deg)}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-new(root){z-index:9999}

@@ -1,0 +1,116 @@
+.wb{display:flex;flex-direction:column;gap:16px}
+.wb-head-actions{display:flex;gap:8px}
+
+/* setup */
+.wb-setup{display:flex;flex-direction:column;gap:16px}
+.wb-setup-fields{display:grid;grid-template-columns:2fr 2fr 1fr;gap:12px}
+.wb-field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.wb-field span{font-size:12px;font-weight:750;color:var(--ux-ink-3)}
+.wb-field select,.wb-field input{height:44px;padding:0 12px;border:0;border-radius:12px;background:var(--ux-surface-2);box-shadow:inset 0 0 0 1px var(--ux-line);color:var(--ux-ink);font:inherit;font-size:14.5px;font-weight:650;min-width:0;width:100%}
+.wb-field select:focus-visible,.wb-field input:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}
+.wb-facts{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:0}
+.wb-facts div{padding:10px 12px;border-radius:14px;background:var(--ux-surface-2)}
+.wb-facts dt{font-size:11px;font-weight:750;color:var(--ux-ink-3)}
+.wb-facts dd{margin:2px 0 0;font-size:15px;font-weight:800;letter-spacing:-.02em}
+
+/* options */
+.wb-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.wb-opt{display:flex;flex-direction:column;gap:12px;padding-bottom:14px}
+.wb-opt.has-err{box-shadow:0 0 0 2px var(--ux-danger)}
+.wb-opt-head{display:flex;align-items:center;gap:10px}
+.wb-opt-head b{font-size:15px;font-weight:780}
+.wb-badge{width:28px;height:28px;flex:none;border-radius:9px;display:grid;place-items:center;background:var(--ux-ink);color:var(--ux-page);font-size:13px;font-weight:850}
+.wb-x{margin-left:auto;width:30px;height:30px;border:0;border-radius:50%;background:var(--ux-surface-2);color:var(--ux-ink-2);font-size:18px;line-height:1}
+.wb-x:hover{background:var(--ux-surface-3);color:var(--ux-ink)}
+.wb-opt-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12.5px;min-height:24px}
+.wb-err{color:var(--ux-danger);font-weight:750}
+.wb-link{border:0;background:none;padding:0;color:var(--ux-accent);font:inherit;font-weight:700;cursor:pointer}
+.wb-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:200px;border:2px dashed var(--ux-line-2);border-radius:24px;background:transparent;color:var(--ux-ink-2);font:inherit;font-size:14px;font-weight:720;cursor:pointer;transition:border-color .2s,color .2s,transform .3s var(--ux-spring)}
+.wb-add span{font-size:28px;line-height:1}
+.wb-add:hover{border-color:var(--ux-accent);color:var(--ux-accent)}
+.wb-add:active{transform:scale(.98)}
+
+.wb-loading{display:grid;place-items:center;min-height:260px}
+
+/* results */
+.wb-results{position:relative;display:flex;flex-direction:column;gap:16px;transition:opacity .3s var(--ux-ease),filter .3s}
+.wb-results.is-stale>:not(.wb-overlay){opacity:.55;filter:saturate(.6)}
+.wb-overlay{position:absolute;inset:0;z-index:5;display:grid;place-items:start center;padding-top:60px;background:color-mix(in srgb,var(--ux-page) 55%,transparent);border-radius:24px;backdrop-filter:blur(2px)}
+.wb-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.wb-res{position:relative;display:block;width:100%;padding:2px;border:0;border-radius:26px;background:var(--ux-line);text-align:left;color:inherit;font:inherit;cursor:pointer;transition:transform .4s var(--ux-spring),box-shadow .3s}
+.wb-res:hover{transform:translateY(-2px)}
+.wb-res:focus-visible{outline:2px solid var(--ux-accent);outline-offset:3px}
+.wb-res.is-rec{background:var(--ux-grad);box-shadow:0 24px 50px -30px var(--ux-shadow-strong)}
+.wb-res.is-pick:not(.is-rec){background:var(--ux-ink-2)}
+.wb-res-inner{height:100%;padding:16px;border-radius:24px;background:var(--ux-surface);display:flex;flex-direction:column;gap:12px}
+.wb-res-head{display:flex;align-items:center;gap:10px}
+.wb-res-q{font-size:12.5px;font-weight:700;color:var(--ux-ink-2)}
+.wb-chips{display:flex;flex-wrap:wrap;gap:6px;min-height:24px}
+.wb-profit small,.wb-runway small{display:block;font-size:11.5px;font-weight:750;color:var(--ux-ink-3)}
+.wb-profit .u098-num{font-size:36px;height:44px;line-height:44px;margin-top:2px}
+.wb-profit .u098-col span{height:44px}
+.wb-profit .u098-col{transform:translateY(calc(var(--d) * -44px))}
+.wb-runway-row{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px}
+.wb-runway-row div{padding:8px 10px;border-radius:12px;background:var(--ux-surface-2)}
+.wb-runway-row span{display:block;font-size:10.5px;font-weight:800;color:var(--ux-ink-3)}
+.wb-runway-row b{font-size:18px;font-weight:850;letter-spacing:-.03em}
+.wb-runway-row .bad{background:color-mix(in srgb,var(--ux-danger) 12%,transparent)}
+.wb-runway-row .bad b{color:var(--ux-danger)}
+.wb-kv{display:flex;flex-direction:column;gap:6px;margin:0;padding-top:10px;border-top:1px solid var(--ux-line)}
+.wb-kv div{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+.wb-kv dt{color:var(--ux-ink-2);font-weight:600}
+.wb-kv dd{margin:0;font-weight:800}
+.wb-kv dd.neg{color:var(--ux-danger)}
+
+.wb-lower{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:14px;align-items:start}
+.wb-fan .card-title,.wb-explain .card-title,.wb-grid .card-title{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.wb-note{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--ux-warn) 12%,transparent);font-size:13px;line-height:1.5;color:var(--ux-ink)}
+.wb-rule{margin:4px 0 0;font-size:13.5px;color:var(--ux-ink-2);line-height:1.5}
+.wb-warn{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--ux-danger) 12%,transparent);color:var(--ux-danger);font-size:13px;font-weight:700}
+.wb-sections{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.wb-sections h4,.wb-attr h4{margin:0 0 4px;font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--ux-ink-3)}
+.wb-sections p{margin:0;font-size:14px;line-height:1.6;color:var(--ux-ink)}
+.wb-sections>div{animation:wb-in .5s var(--ux-ease) both}
+.wb-sections>div:nth-child(2){animation-delay:.08s}
+.wb-sections>div:nth-child(3){animation-delay:.16s}
+@keyframes wb-in{from{opacity:0;transform:translateY(6px)}}
+.wb-skel{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+.wb-skel i{display:block;height:12px;width:100%;border-radius:6px;background:linear-gradient(90deg,var(--ux-surface-2) 25%,var(--ux-surface-3) 50%,var(--ux-surface-2) 75%);background-size:200% 100%;animation:wb-shimmer 1.3s linear infinite}
+@keyframes wb-shimmer{to{background-position:-200% 0}}
+.wb-attr{margin-top:16px;padding-top:14px;border-top:1px solid var(--ux-line);display:flex;flex-direction:column;gap:8px}
+.wb-bar{display:grid;grid-template-columns:120px 1fr 44px;align-items:center;gap:10px;font-size:12.5px;font-weight:650}
+.wb-bar b{text-align:right;font-weight:800}
+.wb-bar-track{height:8px;border-radius:999px;background:var(--ux-surface-3);overflow:hidden}
+.wb-bar-track i{display:block;height:100%;border-radius:inherit;background:var(--ux-grad);transition:width .8s var(--ux-ease)}
+
+.wb-grid-sub{margin:4px 0 6px;font-size:12.5px}
+.wb-grid-svg{display:block;width:100%;max-width:860px;height:auto;margin:0 auto}
+.wb-grid-svg text{font-size:11px;fill:var(--ux-ink-3);font-variant-numeric:tabular-nums}
+.wb-gl{stroke:var(--ux-line-2);opacity:.6}
+.wb-gline{fill:none;stroke:var(--ux-accent);stroke-width:2.2;stroke-linejoin:round}
+.wb-optline{stroke:var(--ux-ink-3);stroke-dasharray:3 4;opacity:.6}
+.wb-optlbl{font-weight:800;fill:var(--ux-ink-2)!important}
+.wb-ok{fill:var(--ux-accent);stroke:var(--ux-surface);stroke-width:2}
+.wb-bad{fill:var(--ux-surface);stroke:var(--ux-danger);stroke-width:2}
+.wb-best{fill:var(--ux-mint);stroke:var(--ux-surface);stroke-width:3}
+
+.wb-meta{font-size:12px;text-align:center}
+
+@media (max-width:1100px){
+  .wb-facts{grid-template-columns:repeat(4,1fr)}
+  .wb-lower{grid-template-columns:1fr}
+}
+@media (max-width:860px){
+  .wb-options,.wb-cards{grid-template-columns:1fr}
+  .wb-add{min-height:80px}
+}
+@media (max-width:560px){
+  .wb-setup-fields{grid-template-columns:1fr 1fr}
+  .wb-setup-fields .wb-field:nth-child(2){grid-column:1/-1;order:-1}
+  .wb-setup-fields .wb-field:first-child{grid-column:1/-1;order:-2}
+  .wb-facts{grid-template-columns:repeat(2,1fr)}
+  .wb-bar{grid-template-columns:100px 1fr 40px}
+}
+@media (prefers-reduced-motion:reduce){
+  .wb-skel i,.wb-sections>div{animation:none}
+}

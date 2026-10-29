@@ -1,0 +1,27 @@
+/* Lucian UX/UI Prompt #165 · MIT License (c) 2026 Seokwoooo · https://lucianlabs.dev/uxui-prompt/#165
+   Adapted: plots the engine's P10–P90 cash band and P50 line per option, adds the cash safety
+   line, a second P50 line for comparison, and a hover readout. Band morph timing unchanged. */
+.u165{width:100%;padding:4px 0 0;position:relative;font-size:13px;line-height:1.45}
+.u165 button{border:1px solid var(--ux-line-2);background:var(--ux-surface);padding:8px 12px;border-radius:10px;min-height:40px;font-size:12px;transition:background .2s,transform .3s var(--ux-ease)}
+.u165 button[aria-pressed="true"]{background:var(--ux-accent-soft);border-color:var(--ux-accent)}
+.u165 button:active{transform:scale(.97)}
+.u165 .status{margin-top:6px;color:var(--ux-ink-2);font-size:12px;line-height:1.5;text-align:center;min-height:18px;font-variant-numeric:tabular-nums}
+.u165 .status b{color:var(--ux-ink)}
+.u165 .controls{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:4px}
+.u165 .controls button{border:0;background:transparent;font-weight:700}
+.u165 .controls button[aria-pressed="true"]{background:var(--ux-accent-soft);color:var(--ux-accent)}
+.u165 svg{display:block;width:100%;overflow:visible}
+.u165 svg text{font-family:inherit;fill:var(--ux-ink-3);font-size:11px;font-variant-numeric:tabular-nums}
+.u165 .gridline{stroke:var(--ux-line-2);fill:none}
+.u165 .forecast{height:280px}
+.u165 .forecast .band{fill:var(--ux-accent-soft);stroke:var(--ux-accent);stroke-width:.7}
+.u165 .forecast .past{fill:none;stroke:var(--ux-ink);stroke-width:2.5;stroke-linejoin:round}
+.u165 .forecast .future{fill:none;stroke:var(--ux-warn);stroke-width:2.5;stroke-dasharray:5 5}
+.u165 .forecast .safety{stroke:var(--ux-danger);stroke-width:1.5;stroke-dasharray:3 4}
+.u165 .forecast .safety-lbl{fill:var(--ux-danger);font-weight:700}
+.u165 .forecast .cross{stroke:var(--ux-ink-3);stroke-width:1}
+.u165 .forecast .dot{fill:var(--ux-ink);stroke:var(--ux-surface);stroke-width:2}
+.u165 .legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:2px;font-size:11.5px;font-weight:650;color:var(--ux-ink-3)}
+.u165 .legend i{display:inline-block;width:16px;height:0;margin-right:6px;vertical-align:middle;border-top:2.5px solid var(--c)}
+.u165 .legend i.band{height:10px;border:1px solid var(--ux-accent);background:var(--ux-accent-soft);border-radius:2px}
+.u165 .legend i.dash{border-top-style:dashed}
