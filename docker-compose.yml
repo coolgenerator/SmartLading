@@ -1,0 +1,23 @@
+# SmartLading 本地 Postgres。5432 已被 luvio-mono 占用，这里映射到 55461。
+# 首次启动会执行 db/init/ 下的 SQL；改了 schema 需要 `docker compose down -v` 重建。
+services:
+  postgres:
+    image: pgvector/pgvector:pg18
+    container_name: smartlading-pg
+    environment:
+      POSTGRES_USER: smartlading
+      POSTGRES_PASSWORD: smartlading
+      POSTGRES_DB: smartlading
+    ports:
+      - "55461:5432"
+    volumes:
+      - smartlading-pg:/var/lib/postgresql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartlading -d smartlading"]
+      interval: 2s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  smartlading-pg:
