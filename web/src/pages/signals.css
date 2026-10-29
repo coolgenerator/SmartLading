@@ -1,0 +1,32 @@
+.sig-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:16px;align-items:start}
+.sig-input{display:flex;flex-direction:column;gap:12px}
+.sig-type{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:var(--ux-ink-3)}
+.sig-type select{height:34px;padding:0 10px;border-radius:10px;border:1px solid var(--ux-line-2);background:var(--ux-surface);color:var(--ux-ink);font:inherit;font-size:13px}
+.sig-sample{height:30px;padding:0 11px;border:0;border-radius:999px;background:var(--ux-surface-2);color:var(--ux-ink-2);font-size:12px;font-weight:700;cursor:pointer;transition:background-color .2s,transform .3s var(--ux-spring)}
+.sig-sample:hover{background:var(--ux-surface-3);color:var(--ux-ink)}
+.sig-sample:active{transform:scale(.95)}
+.sig-sample:focus-visible{outline:2px solid var(--ux-accent);outline-offset:2px}
+.sig-source{padding:18px 20px}
+.sig-source .u281-p{font-size:15.5px}
+.sig-empty{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:var(--ux-surface-2);font-size:13.5px;color:var(--ux-ink-2)}
+.sig-empty b{display:block;color:var(--ux-ink);font-size:14px;margin-bottom:2px}
+.sig-empty svg{width:22px;height:22px;flex:none;fill:none;stroke:var(--ux-ink-3);stroke-width:1.9;stroke-linecap:round}
+.sig-list{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.sig-card{position:relative;padding:14px 16px;border-radius:18px;background:var(--ux-surface);box-shadow:0 0 0 1px var(--ux-line);transition:box-shadow .25s var(--ux-ease),transform .35s var(--ux-spring)}
+.sig-card:hover{box-shadow:0 0 0 1px var(--ux-line-2),0 16px 30px -22px var(--ux-shadow-strong)}
+.sig-card::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:4px;border-radius:0 4px 4px 0;background:var(--c)}
+.sig-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sig-param{font-size:15px;font-weight:780;letter-spacing:-.02em}
+.sig-change{font-size:15px;font-weight:850;color:var(--ux-accent);font-variant-numeric:tabular-nums}
+.sig-target{margin-left:auto;font-size:12px;font-weight:700;color:var(--ux-ink-3)}
+.sig-quote{margin:8px 0 0;font-size:13.5px;line-height:1.5;color:var(--ux-ink-2);font-style:italic}
+.sig-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12px;font-weight:650;color:var(--ux-ink-3);font-variant-numeric:tabular-nums}
+.sig-meta b{color:var(--ux-ink)}
+.sig-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.sig-edit{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px;margin-top:12px;padding:14px;border-radius:14px;background:var(--ux-surface-2)}
+.sig-edit label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:700;color:var(--ux-ink-3)}
+.sig-edit input[type=number]{height:38px;padding:0 10px;border-radius:10px;border:1px solid var(--ux-line-2);background:var(--ux-surface);color:var(--ux-ink);font:inherit;font-size:14px;font-variant-numeric:tabular-nums}
+.sig-edit .full{grid-column:1/-1}
+.sig-loader{display:flex;justify-content:center}
+@media (max-width:980px){.sig-layout{grid-template-columns:1fr}}
+@media (max-width:480px){.sig-edit{grid-template-columns:1fr}.sig-target{margin-left:0;width:100%}}
